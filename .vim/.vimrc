@@ -88,7 +88,8 @@ if has("autocmd")
     " Use the default filetype settings, so that mail gets 'tw' set to 72,
     " 'cindent' is on in C files, etc.
     " Also load indent files, to automatically do language-dependent indenting.
-    execute pathogen#infect()
+    "
+    ""execute pathogen#infect()
     filetype plugin indent on
 
     " Put these in an autocmd group, so that we can delete them easily.
@@ -110,7 +111,7 @@ if has("autocmd")
 
 else
 
-    set autoindent		" always set autoindenting on
+"set autoindent		" always set autoindenting on
 
 endif " has("autocmd")
 
@@ -131,7 +132,8 @@ set autochdir
 "language messages zh_CN.utf-8
 
 set smartindent
-set cc=81
+"set cindent
+"set cc=81
 
 "set cul
 "set cuc
@@ -142,7 +144,7 @@ set laststatus=2
 "新建.c,.h,.sh,.java文件，自动插入文件头 
 autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java,*.py,*.php,*.lua,*.go exec ":call ST()"
 ""定义函数SetTitle，自动插入文件头 
-func ST()
+func! ST()
     "如果文件类型为.sh文件 
     if &filetype == 'sh'
         call setline(1,"\#!/bin/bash")
@@ -178,17 +180,20 @@ func ST()
         call append(line(".")+4, "* @Created Time:  ".strftime("%Y-%m-%d"))
         call append(line(".")+5, "*/")
         call append(line(".")+6, "")
-    elseif &filetype == 'go'
-        call setline(1,"/**")
+
+    endif
+
+    if &filetype == 'go'
+        call setline(1 ,"/**")
         call append(line("."), "* @File:          ".expand("%"))
         call append(line(".")+1, "* @Aim:           ")
         call append(line(".")+2, "* @Author:        foyon")
         call append(line(".")+3, "* @Created Time:  ".strftime("%Y-%m-%d"))
         call append(line(".")+4, "*/")
-        call append(line(".")+5, "package _")
+        call append(line(".")+5, "package main")
         call append(line(".")+6, "import ()")
     endif
-
+ 
     if &filetype == 'cpp'
         call append(line(".")+6, "#include<iostream>")
         call append(line(".")+7, "using namespace std;")
@@ -204,10 +209,7 @@ func ST()
     endif
     "新建文件后，自动定位到文件末尾
 endfunc
-
-autocmd BufNewFile * normal G
-"autocmd BufWriteCmd *.vue exec ":PrettierAsync" 
-"autocmd BufWritePre *.vue,*.js normal gggqG
+"autocmd BufNewFile * normal G
 
 
 let Tlist_Sort_Type = "name"    " 按照名称排序  
@@ -216,14 +218,14 @@ let Tlist_Compart_Format = 1    " 压缩方式
 let Tlist_Exist_OnlyWindow = 1  " 如果只有一个buffer，kill窗口也kill掉buffer  
 
 "add By foyon
- autocmd vimenter * if !argc() | NERDTree | endif
+autocmd vimenter * if !argc() | NERDTree() | endif
  " 只剩 NERDTree时自动关闭
  autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
  "map <F1> :NERDTree<CR>
  map <F1> :NERDTreeToggle<CR>
+ map <F3> :Autoformat<CR>
  "let NERDTreeDirArrows = 2 
- map <F2> :call ST()<CR>
- map <F12> :PrettierAsync<CR>
+
 "C，C++ 按F5编译运行
 map <F5> :call CompileRunGcc()<CR>
 func! CompileRunGcc()
@@ -290,35 +292,33 @@ endfunc
 "结束定义FormartSrc
 
 
-call plug#begin()                                                                   
-Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }                                 
-Plug 'dgryski/vim-godef'                                                            
-Plug 'josudoey/vim-eslint-fix'
-call plug#end()  
-let g:go_version_warning = 0
+call plug#begin()
+Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+Plug 'dgryski/vim-godef'
+Plug 'scrooloose/syntastic'
+Plug 'Chiel92/vim-autoformat'
+call plug#end()
 
-
-let g:NERDTreeDirArrows = 1
-let g:NERDTreeDirArrowExpandable = '▸'
-let g:NERDTreeDirArrowCollapsible = '▾'
-
-let g:go_version_warning = 0                                                        
-let g:godef_same_file_in_same_window=1                                              
-let g:godef_split=2     
-
-
-
-" 末尾使用分号
-let g:prettier#config#semi = 'true'                                                                       
-" 字符串使用单引号
-let g:prettier#config#single_quote = 'false'
-" 尾逗号
-let g:prettier#config#trailing_comma = 'none'
-let g:prettier#config#bracketSpacing = 'true' 
-
-"pretty the file before saving.                                                                                 
-"autocmd BufWritePre *.vue,*.js execute 'call PrettyFile()'
 let g:syntastic_javascript_checkers = ['eslint']
+let g:syntastic_always_populate_loc_list = 1
+
+let g:go_version_warning = 0
+let g:godef_same_file_in_same_window=1
+let g:godef_split=2
+
+let g:syntastic_javascript_checkers = ['eslint']
+let g:formatdef_eslint = '"SRC=eslint-temp-${RANDOM}.js; cat - >$SRC; eslint --fix $SRC >/dev/null 2>&1; cat $SRC | perl -pe \"chomp if eof\"; rm -f $SRC"'
+let g:formatters_javascript = ['eslint']
+
+"let g:user_emmet_install_glmbal = 0
+"autocmd FileType vue EmmetInstall
+"autocmd FileType vue syntax sync fromstart
+"autocmd FileType js syntax sync fromstart
+
+
+
+
+
 
 
 
