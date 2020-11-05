@@ -28,8 +28,8 @@ set shiftwidth=4
 set nobackup		" do not keep a backup file, use versions instead
 set history=50		" keep 50 lines of command line history
 set ruler		" show the cursor position all the time
-set cul
-set cuc
+"set cul
+"set cuc
 set showcmd		" display incomplete commands
 set incsearch		" do incremental searching
 set ts=4
@@ -141,9 +141,9 @@ set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strf
 set laststatus=2 
 "注释引入
 "新建.c,.h,.sh,.java文件，自动插入文件头 
-autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java,*.py,*.php,*.lua exec ":call SetTitle()"
+autocmd BufNewFile *.cpp,*.[ch],*.sh,*.java,*.py,*.php,*.lua,*.go exec ":call ST()"
 ""定义函数SetTitle，自动插入文件头 
-func SetTitle()
+func ST()
     "如果文件类型为.sh文件 
     if &filetype == 'sh'
         call setline(1,"\#!/bin/bash")
@@ -179,8 +179,18 @@ func SetTitle()
         call append(line(".")+4, "* @Created Time:  ".strftime("%Y-%m-%d"))
         call append(line(".")+5, "*/")
         call append(line(".")+6, "")
-
     endif
+    if &filetype == 'go'
+        call setline(1,"/**")
+        call append(line("."),   "* @File:          ".expand("%"))
+        call append(line(".")+1, "* @Aim:           ")
+        call append(line(".")+2, "* @Author:        foyon")
+        call append(line(".")+3, "* @Created Time:  ".strftime("%Y-%m-%d"))
+        call append(line(".")+4, "*/")
+        call append(line(".")+5, "package _")
+        call append(line(".")+6, "import ()")
+    endif
+
     if &filetype == 'cpp'
         call append(line(".")+6, "#include<iostream>")
         call append(line(".")+7, "using namespace std;")
