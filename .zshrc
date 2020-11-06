@@ -5,5 +5,7 @@ export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles
 
 
 export GOROOT=/usr/local/Cellar/go/1.14.2_1/libexec
-export PATH=$PATH:$GOROOT/bin
-export GOPATH=/Users/fanhongyi/go
+#export PATH="$PATH:$(go env GOPATH)/bin"
+export GOPATH=$HOME/go
+export GOBIN=$GOPATH/bin
+export PATH=$PATH:$GOROOT:$GOPATH:$GOBIN
